@@ -1,13 +1,13 @@
 /*************************************************************************
 Arquivo a ser processado pelo programa JavaCC.
-ContÈm:
-       - descriÁ„o do analisador lÈxico para a linguagem X++ 
-       - descriÁ„o do analisador sint·tico para a linguagem X++
-       - recuperaÁ„o de erros sint·ticos
-       - construÁ„o da ·rvore sint·tica
+Cont√©m:
+       - descri√ß√£o do analisador l√©xico para a linguagem X++ 
+       - descri√ß√£o do analisador sint√°tico para a linguagem X++
+       - recupera√ß√£o de erros sint√°ticos
+       - constru√ß√£o da √°rvore sint√°tica
 
 Autor: Marcio Delamaro
-Este programa È parte do livro "ConstruÁ„o de compiladores usando ferra..."
+Este programa √© parte do livro "Constru√ß√£o de compiladores usando ferra..."
 ************************************************************************/
 options {
   STATIC = false;
@@ -18,30 +18,30 @@ PARSER_BEGIN(langX)
 package parser;
 
 import java.io.*;
-import recovery.*;   // importa as classes de recuperaÁ„o de erros do AS
-import syntacticTree.*; // importa as classes dos nÛs da ·rvore sint·tica
+import recovery.*;   // importa as classes de recupera√ß√£o de erros do AS
+import syntacticTree.*; // importa as classes dos n√≥s da √°rvore sint√°tica
  
 
 public class langX {
 final static String Version = "X++ Compiler - Version 1.0 - 2004";
-int contParseError = 0;           // contador de erros sint·ticos
-boolean debug_recovery;   // controla verbose de recuperaÁ„o de erros
+int contParseError = 0;           // contador de erros sint√°ticos
+boolean debug_recovery;   // controla verbose de recupera√ß√£o de erros
 Token lastError = null;
 
 
-// Define o mÈtodo "main" da classe langX.  
+// Define o m√©todo "main" da classe langX.  
   public  static void main(String args[]) throws ParseException 
   {
   boolean debug_as = false;
   boolean debug_recovery = false;
 
     String filename = ""; // nome do arquivo a ser analisado
-    langX parser;     // analisador lÈxico/sint·tico
+    langX parser;     // analisador l√©xico/sint√°tico
     int i;
     boolean ms = false;
 
     System.out.println(Version);
-    // lÍ os par‚metros passados para o compilador
+    // l√™ os par√¢metros passados para o compilador
     for (i = 0; i < args.length - 1; i++)
     {
         if (args[i].equals("-debug_AS") )
@@ -58,12 +58,12 @@ Token lastError = null;
     }
 
     if (args[i].equals("-"))
-    {       // lÍ da entrada padr„o      
+    {       // l√™ da entrada padr√£o      
         System.out.println("Reading from standard input . . .");
         parser = new langX(System.in); // cria AS
      }
      else 
-    {       // lÍ do arquivo
+    {       // l√™ do arquivo
         filename = args[args.length-1];  
         System.out.println("Reading from file " + filename + " . . .");
         try {  // cria AS
@@ -79,7 +79,7 @@ Token lastError = null;
     parser.debug_recovery = debug_recovery;
     if (! debug_as) parser.disable_tracing(); // desab. verbose do AS
     try {
-        root = parser.program();   // chama o mÈtodo que faz a an·lise
+        root = parser.program();   // chama o m√©todo que faz a an√°lise
     }
     catch (ParseEOFException e)
     {
@@ -106,9 +106,9 @@ String s;
 }
 
 
-boolean eof;    // vari·vel que indica se EOF foi alcanÁado
-// o mÈtodo abaixo consome tokens atÈ alcanÁar um que pertenÁa ao conjunto
-// de sincronizaÁ„o
+boolean eof;    // vari√°vel que indica se EOF foi alcan√ßado
+// o m√©todo abaixo consome tokens at√© alcan√ßar um que perten√ßa ao conjunto
+// de sincroniza√ß√£o
 
 void consumeUntil(RecoverySet g,
                  ParseException e,
@@ -117,17 +117,17 @@ void consumeUntil(RecoverySet g,
 {
 Token tok;
 
-   if ( debug_recovery) // informaÁ„o sobre a recuperaÁ„o
+   if ( debug_recovery) // informa√ß√£o sobre a recupera√ß√£o
    {
        System.out.println();
        System.out.println("*** " + met + " ***");
        System.out.println("     Syncronizing Set: " + g);
    }
 
-   if (g == null) throw e; // se o conjunto È null, propaga a exceÁ„o
+   if (g == null) throw e; // se o conjunto √© null, propaga a exce√ß√£o
 
    tok = getToken(1); // pega token corrente
-   while ( ! eof )  // se n„o chegou ao fim do arquivo
+   while ( ! eof )  // se n√£o chegou ao fim do arquivo
    {
         if ( g.contains(tok.kind ) ) //achou um token no conjunto
         {
@@ -138,7 +138,7 @@ Token tok;
         }
         if (debug_recovery)
              System.out.println("     Ignoring token: " + im(tok.kind));
-        getNextToken();     // pega prÛximo token       
+        getNextToken();     // pega pr√≥ximo token       
         tok = getToken(1);
         if (tok.kind == EOF && ! g.contains(EOF) ) // fim da entrada?   
             eof = true;
@@ -147,7 +147,7 @@ Token tok;
    {
         System.out.println(e.getMessage());
         lastError = tok;
-        contParseError++;  // incrementa n˙mero de erros
+        contParseError++;  // incrementa n√∫mero de erros
    }
    if ( eof ) throw new ParseEOFException("EOF found prematurely.");
 }
@@ -244,7 +244,7 @@ TOKEN :
 
 TOKEN :
 {
-  < int_constant:(  // n˙meros decimais
+  < int_constant:(  // n√∫meros decimais
                   (["0"-"9"] (["0"-"9"])* )
                  ) >
 |
@@ -327,7 +327,7 @@ TOKEN :
 | < NOT: "!" >
 }
 
-/* Trata os erros lÈxicos */
+/* Trata os erros l√©xicos */
 SPECIAL_TOKEN :
 {
 <INVALID_LEXICAL: 
@@ -431,7 +431,7 @@ try {
 catch (ParseException e)
 {
     consumeUntil(g, e, "classdecl");
-    return new ClassDeclNode(t, n, e1, a, c);
+    return new ClassDeclNode(a, t, n, e1, c);
 }
 }
 
@@ -542,25 +542,29 @@ catch (ParseException e)
 }
 }
 
-//parou aqui
 MethodDeclNode methoddecl(RecoverySet g) throws ParseEOFException :
 {
-Token t1 = null,
-      t2 = null;
+	RecoverySet f1 = new RecoverySet(LBRACKET).union(g);
+	RecoverySet f2 = new RecoverySet(IDENT).union(f1);
+
+Token a = null, b = null, t1 = null, t2 = null;
 int k = 0;
 MethodBodyNode m = null;
+PrimitiveTypeNode c = null;
 }
 {
 try {
-   ( t1 = <INT> |  t1 = <STRING> | t1 = <IDENT> ) 
+	[a = <PUBLIC> | a = <PRIVATE> | a = <PROTECTED>] 
+	[b = <FINAL>]
+   ( c = primitivetype(f2) | t1 = <IDENT> ) 
    (<LBRACKET> <RBRACKET> { k++; } )*
    t2 = <IDENT> m = methodbody(g)
-      { return new MethodDeclNode(t1, k, t2, m); }
+      { return new MethodDeclNode(a, b, c, t1, k, t2, m); }
 }
 catch (ParseException e)
 {
    consumeUntil(g, e, "methoddecl");
-   return new MethodDeclNode(t1, k, t2, m);
+   return new MethodDeclNode(a, b, c, t1, k, t2, m);
 }
 }
 
@@ -586,25 +590,27 @@ catch (ParseException e)
 
 ListNode paramlist(RecoverySet g) throws ParseEOFException :
 {
+	RecoverySet f1 = new RecoverySet(IDENT).union(g);
 ListNode p = null, q = null;
 int k = 0;
 Token t1 = null;
 Token t2 = null;
+PrimitiveTypeNode a = null;
 }
 {
 try {
    [
-    ( t1 = <INT> |  t1 = <STRING> | t1 = <IDENT>) t2 = <IDENT> 
+    ( a = primitivetype(f1) | t1 = <IDENT>) t2 = <IDENT> 
     (<LBRACKET> <RBRACKET> { k++; } )*
        { 
          q = new ListNode(new VarNode(t2, k));
-     p = new ListNode(new VarDeclNode(t1, q));
+     p = new ListNode(new VarDeclNode(a, t1, q));
        }
-    (   <COMMA> {k = 0;}  ( t1 = <INT> |  t1 = <STRING> | t1 = <IDENT>) 
+    (   <COMMA> {k = 0;}  ( a = primitivetype(f1) | t1 = <IDENT>) 
         t2= <IDENT> (<LBRACKET> <RBRACKET> {k ++;} )*
        {
          q = new ListNode(new VarNode(t2, k));
-         p.add(new VarDeclNode(t1, q));
+         p.add(new VarDeclNode(a, t1, q));
        } 
     )*    
    ] { return p;}
@@ -631,6 +637,9 @@ RecoverySet f2 = new RecoverySet(RBRACE).union(g).remove(IDENT);
 try {
 
 (
+	LOOKAHEAD(3)
+	s = methodcall(f1) <SEMICOLON>
+|
     LOOKAHEAD(<IDENT> <IDENT>)
     s = vardecl(f1) <SEMICOLON> 
 |
@@ -656,6 +665,14 @@ try {
     t1 = <BREAK> <SEMICOLON> { s = new BreakNode(t1);}
 |
     t1 = <SEMICOLON> { s = new NopNode(t1); }
+//mudancas
+|
+	s = dowhilestat(f1) <SEMICOLON>
+|
+	s = whilestat(g)
+|
+	s = switchstat(g)
+
 )  {return s;}
 }
 catch (ParseException e)
@@ -665,10 +682,30 @@ catch (ParseException e)
 }
 }
 
+//duvida
+MethodCallNode methodcall(RecoverySet g) throws ParseEOFException :
+{
+	RecoverySet f1 = new RecoverySet(RPAREN).union(g);
+	Token a = null;
+	ListNode l = null;
+}
+{
+try{
+	a = <IDENT> (<DOT> <IDENT>)* <LPAREN> l = paramlist(f1) <RPAREN>
+	{ return new MethodCallNode(a, l);}
+}
+catch (ParseException e)
+{
+	consumeUntil(g, e, "methodcall");
+	return new MethodCallNode(a, l);
+}
+}
 
+//duvida tambem no AtribNode
 AtribNode atribstat(RecoverySet g) throws ParseEOFException :
 {
 ExpreNode e1 = null, e2 = null;
+MethodCallNode a = null;
 Token t1 = null;
 
 RecoverySet f1 = new RecoverySet(ASSIGN).union(g);
@@ -676,13 +713,13 @@ RecoverySet f1 = new RecoverySet(ASSIGN).union(g);
 {
 try {
     e1 = lvalue(f1) t1 = <ASSIGN> 
-    ( e2 = alocexpression(g) | e2 = expression(g)) 
-    { return new AtribNode(t1, e1, e2); }
+    ( e2 = alocexpression(g) | LOOKAHEAD(3) e2 = logicexpression(g) | LOOKAHEAD(3) a = methodcall(g)) 
+    { return new AtribNode(t1, e1, e2, a); }
 }
 catch (ParseException e)
 {
    consumeUntil(g, e, "atribstat");
-   return new AtribNode(t1, e1, e2);
+   return new AtribNode(t1, e1, e2, a);
 }
 }
 
@@ -693,7 +730,7 @@ Token t = null;
 }
 {
 try {
-    t = <PRINT> e1 = expression(g)
+    t = <PRINT> e1 = logicexpression(g)
       { return new PrintNode(t, e1); }
 }
 catch (ParseException e)
@@ -728,7 +765,7 @@ Token t = null;
 }
 {
 try {
-    t = <RETURN> [ e1 = expression(g)]
+    t = <RETURN> [ e1 = logicexpression(g)]
       { return new ReturnNode(t, e1); }
 }
 catch (ParseException e)
@@ -770,7 +807,7 @@ RecoverySet f1 = new RecoverySet(RPAREN).union(g),
 }
 {
 try {
-    t = <IF> <LPAREN> e1 = expression(f1) <RPAREN> s1 = statement(f2)
+    t = <IF> <LPAREN> e1 = logicexpression(f1) <RPAREN> s1 = statement(f2)
     [LOOKAHEAD(1) <ELSE> s2 = statement(g)]
      { return new IfNode(t, e1, s1, s2); }
 }
@@ -797,7 +834,7 @@ RecoverySet f1 = new RecoverySet(SEMICOLON).union(g),
 {
 try {
     t = <FOR> <LPAREN> [s1 = atribstat(f1)] <SEMICOLON>
-                   [e1 = expression(f1)] <SEMICOLON>
+                   [e1 = logicexpression(f1)] <SEMICOLON>
                    [s2 = atribstat(f2)] <RPAREN>
                     s3 = statement(g)
    { return new ForNode(t, e1, s1, s2, s3); }
@@ -806,6 +843,81 @@ catch (ParseException e)
 {
    consumeUntil(g, e, "forstat");
    return new ForNode(t, e1, s1, s2, s3);
+}
+}
+
+WhileNode whilestat(RecoverySet g) throws ParseEOFException :
+{
+	RecoverySet f1 = new RecoverySet(RPAREN).union(g);
+	Token a = null;
+	ExpreNode e = null;
+	StatementNode s = null;
+}
+{
+try{
+	a = <WHILE> <LPAREN>  e = logicexpression(f1) <RPAREN> s = statement(g)
+	{ return new WhileNode(a, e, s);}
+}
+catch(ParseException e)
+{
+	consumeUntil(g, e, "whilestat");
+	return new DoWhileNode(a, e, s);
+}
+}
+
+DoWhileNode dowhilestat(RecoverySet g) throws ParseEOFException :
+{
+	RecoverySet f1 = new RecoverySet(LPAREN).union(g);
+	RecoverySet f2 = new RecoverySet(RPAREN).union(g);
+	Token a = null;
+	StatementNode s = null;
+	ExpreNode e = null;
+}
+{
+try{
+	a = <DO> s = statement(f1) <LPAREN> e = logicexpression(f2) <RPAREN>
+	{ return new DoWhileNode(a, s, e);}
+}
+catch(ParseException e)
+{
+	consumeUntil(g, e, "dowhilestat");
+	return new DoWhileNode(a, s, e);
+}
+}
+
+SwitchNode switchstat(RecoverySet g) throws ParseEOFException :
+{
+	RecoverySet f1 = new RecoverySet(RBRACE).union(g);
+	RecoverySet f2 = First.switchcasestat.union(f1);
+	Token a = null, b = null, c = null;
+	ListNode l = null;
+	StatementNode s = null;
+}
+{
+	a = <SWITCH> <LPAREN> b = <IDENT> <RPAREN> c = <LBRACE> (s = switchcasestat(f2){
+	if(l == null)
+      	l = new ListNode(s);
+    else
+      	l.add(s);
+	})* <RBRACE>
+	{ return new SwitchNode(a, b, c, s);}
+}
+
+SwitchCaseNode switchcasestat(RecoverySet g) throws ParseEOFException :
+{
+	Token a = null, b = null;
+	ExpreNode e = null;
+	StatementNode s = null;
+}
+{
+try{
+	((a = <CASE> e = factor()) | a = <DEFAULTT>) b = <DOISP> s = statement(g)
+	{ return new SwitchCaseNode(a, e, b, s);}
+}
+catch(ParseException e)
+{
+	consumeUntil(g, e, "switchcasestat");
+	return new SwitchCaseNode(a, e, b, s);
 }
 }
 
@@ -821,6 +933,7 @@ RecoverySet f = First.statlist.remove(IDENT).union(g);
     { return new ListNode(s, l); }
 }
 
+//olhar depois
 ExpreNode lvalue(RecoverySet g) throws ParseEOFException :
 {
 ExpreNode e1 = null,
@@ -853,7 +966,7 @@ catch (ParseException e)
 }
 
 
-
+//parou aqui
 ExpreNode alocexpression(RecoverySet g) throws ParseEOFException :
 {
 ExpreNode e1 = null,
