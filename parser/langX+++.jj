@@ -495,24 +495,26 @@ catch (ParseException e)
 }
 }
 
-//parouaqui
+//duvida
 VarDeclNode vardecl(RecoverySet g) throws ParseEOFException :
 {
-Token a = null, b = null, t1 = null, t2; 
-int k = 0;
-ListNode l = null; 
+	RecoverySet f1 = new RecoverySet(IDENT).union(g);
+	Token a = null, b = null, t1 = null, t2; 
+	int k = 0;
+	ListNode l = null;
+	PrimitiveTypeNode c = null; 
 }
 {
 try {
-	[<PUBLIC> | <PRIVATE> | <PROTECTED>] 
-	[<FINAL>]
-   ( t1 = <INT> |  t1 = <STRING> | t1 = <IDENT> )
+	[ a = <PUBLIC> | a = <PRIVATE> | a = <PROTECTED>] 
+	[ b = <FINAL>]
+   ( c = primitivetype(f1) | t1 = <IDENT> )
    t2 = <IDENT> ( <LBRACKET> <RBRACKET> { k++; } )*
      { l = new ListNode(new VarNode(t2, k)); }
    (<COMMA> { k = 0; }  t2 = <IDENT> ( <LBRACKET> <RBRACKET> { k++; })* 
      { l.add(new VarNode(t2, k)); }
    )*
-  { return new VarDeclNode(t1, l); }
+  { return new VarDeclNode(a, b, c, t1, l); }
 }
 catch (ParseException e)
 {
@@ -524,13 +526,14 @@ catch (ParseException e)
 
 ConstructDeclNode constructdecl(RecoverySet g) throws ParseEOFException :
 {
-Token t = null;
+Token t = null, a = null;
 MethodBodyNode m = null;
 }
 {
 try {
+	[ a = <PUBLIC> | a = <PRIVATE> | a = <PROTECTED>]
     t = <CONSTRUCTOR> m = methodbody(g)
-       { return new ConstructDeclNode(t, m);}
+       { return new ConstructDeclNode(a, t, m);}
 }
 catch (ParseException e)
 {
@@ -539,6 +542,7 @@ catch (ParseException e)
 }
 }
 
+//parou aqui
 MethodDeclNode methoddecl(RecoverySet g) throws ParseEOFException :
 {
 Token t1 = null,
