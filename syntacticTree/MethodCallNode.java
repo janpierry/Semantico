@@ -4,10 +4,12 @@ import parser.*;
 
 
 public class MethodCallNode extends StatementNode {
+	public ExpreNode caminho; //ident.indent.indent...
 	public ListNode parametros;
 
-    public MethodCallNode(Token t, ListNode p) {
-        super(t);
+    public MethodCallNode(ExpreNode e, ListNode p) {
+        super(null);
+        caminho = e;
         parametros = p;
     }
 }

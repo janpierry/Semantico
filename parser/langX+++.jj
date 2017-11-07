@@ -5,9 +5,6 @@ Contém:
        - descrição do analisador sintático para a linguagem X++
        - recuperação de erros sintáticos
        - construção da árvore sintática
-
-Autor: Marcio Delamaro
-Este programa é parte do livro "Construção de compiladores usando ferra..."
 ************************************************************************/
 options {
   STATIC = false;
@@ -413,7 +410,7 @@ RecoverySet f = First.classlist.union(g);
 }
 {
 (
-   c = classdecl(f) [ l = classlist(g) ]
+   c = classdecl(f) [LOOKAHEAD(2) l = classlist(g) ]
 ) { return new ListNode(c, l);}
 
 }
@@ -456,7 +453,7 @@ RecoverySet f2 = new RecoverySet(SEMICOLON).union(g).remove(IDENT),
 {
 try {
    t = <LBRACE>
-      [c = classlist(f5)]
+      [LOOKAHEAD(2) c = classlist(f5)]
       (LOOKAHEAD(3) vd = vardecl(f2) <SEMICOLON> 
         { if ( v == null)
               v = new ListNode(vd);
@@ -471,7 +468,7 @@ try {
       		as.add(an);
       	}
       )*
-      (cd = constructdecl(f4)
+      (LOOKAHEAD(2) cd = constructdecl(f4)
         { if ( ct == null)
               ct = new ListNode(cd);
           else
@@ -519,7 +516,7 @@ try {
 catch (ParseException e)
 {
    consumeUntil(g, e, "vardecl");
-   return new VarDeclNode(t1, l);
+   return new VarDeclNode(a, b, c, t1, l);
 }
 }
 
@@ -538,7 +535,7 @@ try {
 catch (ParseException e)
 {
    consumeUntil(g, e, "constructdecl");
-   return new ConstructDeclNode(t, m);
+   return new ConstructDeclNode(a, t, m);
 }
 }
 
@@ -682,22 +679,25 @@ catch (ParseException e)
 }
 }
 
-//duvida
+//duvida: MethodCallNode com super(null)
 MethodCallNode methodcall(RecoverySet g) throws ParseEOFException :
 {
 	RecoverySet f1 = new RecoverySet(RPAREN).union(g);
-	Token a = null;
+	Token a = null, b = null;
+	ExpreNode e1 = null;
 	ListNode l = null;
 }
 {
 try{
-	a = <IDENT> (<DOT> <IDENT>)* <LPAREN> l = paramlist(f1) <RPAREN>
-	{ return new MethodCallNode(a, l);}
+	a = <IDENT> { e1 = new VarNode(a);}
+	(a = <DOT> b = <IDENT> { e1 = new DotNode(a, e1, b);})* 
+	<LPAREN> l = paramlist(f1) <RPAREN>
+	{ return new MethodCallNode(e1, l);}
 }
 catch (ParseException e)
 {
 	consumeUntil(g, e, "methodcall");
-	return new MethodCallNode(a, l);
+	return new MethodCallNode(e1, l);
 }
 }
 
@@ -850,18 +850,18 @@ WhileNode whilestat(RecoverySet g) throws ParseEOFException :
 {
 	RecoverySet f1 = new RecoverySet(RPAREN).union(g);
 	Token a = null;
-	ExpreNode e = null;
+	ExpreNode e1 = null;
 	StatementNode s = null;
 }
 {
 try{
-	a = <WHILE> <LPAREN>  e = logicexpression(f1) <RPAREN> s = statement(g)
-	{ return new WhileNode(a, e, s);}
+	a = <WHILE> <LPAREN>  e1 = logicexpression(f1) <RPAREN> s = statement(g)
+	{ return new WhileNode(a, e1, s);}
 }
 catch(ParseException e)
 {
 	consumeUntil(g, e, "whilestat");
-	return new DoWhileNode(a, e, s);
+	return new WhileNode(a, e1, s);
 }
 }
 
@@ -871,17 +871,17 @@ DoWhileNode dowhilestat(RecoverySet g) throws ParseEOFException :
 	RecoverySet f2 = new RecoverySet(RPAREN).union(g);
 	Token a = null;
 	StatementNode s = null;
-	ExpreNode e = null;
+	ExpreNode e1 = null;
 }
 {
 try{
-	a = <DO> s = statement(f1) <LPAREN> e = logicexpression(f2) <RPAREN>
-	{ return new DoWhileNode(a, s, e);}
+	a = <DO> s = statement(f1) <LPAREN> e1 = logicexpression(f2) <RPAREN>
+	{ return new DoWhileNode(a, s, e1);}
 }
 catch(ParseException e)
 {
 	consumeUntil(g, e, "dowhilestat");
-	return new DoWhileNode(a, s, e);
+	return new DoWhileNode(a, s, e1);
 }
 }
 
@@ -906,18 +906,18 @@ SwitchNode switchstat(RecoverySet g) throws ParseEOFException :
 SwitchCaseNode switchcasestat(RecoverySet g) throws ParseEOFException :
 {
 	Token a = null, b = null;
-	ExpreNode e = null;
+	ExpreNode e1 = null;
 	StatementNode s = null;
 }
 {
 try{
-	((a = <CASE> e = factor()) | a = <DEFAULTT>) b = <DOISP> s = statement(g)
-	{ return new SwitchCaseNode(a, e, b, s);}
+	((a = <CASE> e1 = factor()) | a = <DEFAULTT>) b = <DOISP> s = statement(g)
+	{ return new SwitchCaseNode(a, e1, b, s);}
 }
 catch(ParseException e)
 {
 	consumeUntil(g, e, "switchcasestat");
-	return new SwitchCaseNode(a, e, b, s);
+	return new SwitchCaseNode(a, e1, b, s);
 }
 }
 
@@ -966,16 +966,18 @@ catch (ParseException e)
 }
 
 
-//parou aqui
+//duvida: deixar todos os que tem primitivetype ou ident instanciados na classe Node
 ExpreNode alocexpression(RecoverySet g) throws ParseEOFException :
 {
 ExpreNode e1 = null,
           e2 = null;
 ListNode l = null;
 Token t1, t2;
+PrimitiveTypeNode a = null;
 
 RecoverySet f1 = new RecoverySet(RPAREN).union(g),
             f2 = new RecoverySet(RBRACKET).union(g);
+            f3 = new RecoverySet(LBRACKET).union(g);
 }
 {
     t1 = <NEW> 
@@ -983,7 +985,7 @@ RecoverySet f1 = new RecoverySet(RPAREN).union(g),
       LOOKAHEAD(2) t2 = <IDENT> <LPAREN> l = arglist(f1) <RPAREN>
          { e1 = new NewObjectNode(t1, t2, l); } 
 |
-      ( t2 = <INT> | t2 = <STRING> | t2 = <IDENT> )
+      ( a = primitivetype(f3) | t2 = <IDENT> )
       (<LBRACKET> e2 = expression(f2) <RBRACKET>
               {
                 if ( l == null )
@@ -992,9 +994,39 @@ RecoverySet f1 = new RecoverySet(RPAREN).union(g),
                    l.add(e2);
               }
        )+
-          { e1 = new NewArrayNode(t1, t2, l); }
+          { e1 = new NewArrayNode(t1, a, t2, l); }
     )
     { return e1; }
+}
+
+//possivel gambiarra
+ExpreNode logicexpression(RecoverySet g) throws ParseEOFException :
+{
+	RecoverySet f1 = new RecoverySet(XOR).union(g);
+	RecoverySet f2 = new RecoverySet(OR).union(f1);
+	RecoverySet f3 = new RecoverySet(AND).union(f2);
+	Token a = null, b = null, c = null;
+	ExpreNode e1 = null, e2 = null;
+	ListNode l = null;
+}
+{
+try{
+  [a = <NOT>] e1 = expression(f3) ((b =  <XOR> | b = <OR> | b = <AND>) [c = <NOT>] e2 = expression(f3)
+  {
+  	if(l = null){
+  		l = new ListNode(new RelationalNode(b, e2));
+  	}else{
+  		l.add(new RelationalNode(b, e2));
+  	}
+  }
+  )*
+  { return new RelationalNode(a, e1, l);}
+}
+catch(ParseException e)
+{
+	consumeUntil(g, e, "logicexpression");
+	return new RelationalNode(a, e1, l);
+}
 }
 
 
@@ -1062,21 +1094,38 @@ Token t = null;
    { return ( (t == null) ? e : new UnaryNode(t, e));}
 }
 
-
+//duvida: na classe ExpreNode criei um novo construtor com super(null)
 ExpreNode factor() throws ParseEOFException :
 {
 ExpreNode e = null;
 Token t;
+MethodCallNode m = null;
 }
 {    
     ( 
        t = <int_constant> { e = new IntConstNode(t); }
     | 
        t = <string_constant> { e = new StringConstNode(t); }
+    |
+       t = <boolean_constant> { e = new BooleanConstNode(t);} 
+    |
+       t = <char_constant> { e = new CharConstNode(t);} 
+    |
+       t = <double_constant> { e = new DoubleConstNode(t);} 
+    |
+       t = <byte_constant> { e = new ByteConstNode(t);} 
+    |
+       t = <short_constant> { e = new ShortConstNode(t);} 
+    |
+       t = <long_constant> { e = new LongConstNode(t);} 
+    |
+       t = <float_constant> { e = new FloatConstNode(t);} 
     | 
        t = <null_constant> { e = new NullConstNode(t); }
     |
-       e = lvalue(null) 
+       LOOKAHEAD(3) e = lvalue(null) 
+    |
+       m = methodcall(null) { e = new ExpreNode(m);} 
     |
        <LPAREN> e = expression(null) <RPAREN>
     )
@@ -1092,11 +1141,20 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
 }
 {
     [
-       e = expression(f) 
+       e = logicexpression(f) 
           { l = new ListNode(e); }
-       (<COMMA> e = expression(f)
+       (<COMMA> e = logicexpression(f)
           { l.add(e);}
        )*
     ]
     { return l;}
+}
+
+PrimitiveTypeNode primitivetype(RecoverySet g) throws ParseEOFException :
+{
+	Token a = null;
+}
+{
+	(a = <INT> | a = <STRING> | a = <BOOLEAN> | a = <CHAR> | a = <DOUBLE> | a = <BYTE> | a = <SHORT> | a = <LONG> | a = <FLOAT>)
+	{ return new PrimitiveTypeNode(a); }
 }

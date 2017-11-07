@@ -4,12 +4,18 @@ import parser.*;
 
 
 public class NewArrayNode extends ExpreNode {
-    public Token name;
+	public PrimitiveTypeNode tipo = null;
+    public Token name = null;;
     public ListNode dims;
 
-    public NewArrayNode(Token t, Token t2, ListNode d) {
+    public NewArrayNode(Token t, PrimitiveTypeNode a, Token t2, ListNode d) {
         super(t);
-        name = t2;
+        if(a == null){
+        	name = t2;
+        }else{
+        	tipo = a;
+        }
+        
         dims = d;
     }
 }
