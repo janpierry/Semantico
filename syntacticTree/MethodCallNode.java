@@ -8,7 +8,7 @@ public class MethodCallNode extends StatementNode {
 	public ListNode parametros;
 
     public MethodCallNode(ExpreNode e, ListNode p) {
-        super(null);
+        super(e.position);
         caminho = e;
         parametros = p;
     }

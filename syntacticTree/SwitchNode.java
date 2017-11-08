@@ -6,13 +6,13 @@ import parser.*;
 public class SwitchNode extends StatementNode {
     public Token variavel;
     public Token lbrace;
-    public StatementNode statement;
+    public ListNode lista;
 
-    public SwitchNode(Token a, Token b, Token c, StatementNode s) {
+    public SwitchNode(Token a, Token b, Token c, ListNode l) {
         super(a);
         variavel = b;
         lbrace = c;
-        statement = s;
+        lista = l;
     }
 
 }

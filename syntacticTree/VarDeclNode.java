@@ -8,25 +8,13 @@ public class VarDeclNode extends StatementNode {
     public Token hasfinal;
     public PrimitiveTypeNode tipo;
     public Token tipoClasse;
+    public Token escopo;
 
-    public VarDeclNode(Token a, Token b, PrimitiveTypeNode c, Token t, ListNode p) {
-        super(a);
+    public VarDeclNode(Token a, Token b, Token t, ListNode p) {
+        super(t);
+        escopo = a;
         hasfinal = b;
-        if(c == null){
-        	tipoClasse = t;
-        }else{
-        	tipo = c;
-        }
         vars = p;
     }
 
-    public VarDeclNode(PrimitiveTypeNode c, Token t, ListNode p) {
-    	super(null);
-    	if(c == null){
-    		this.position = t;
-    	}else{
-    		this.position = c.tipo;
-    	}
-    	vars = p;
-    }
 }

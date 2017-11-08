@@ -245,7 +245,7 @@ ClassBodyNode c = null;
           ;
         }
         c = classbody(g);
-     {if (true) return new ClassDeclNode(t, n, e1, a, c);}
+     {if (true) return new ClassDeclNode(a, t, n, e1, c);}
       } catch (ParseException e) {
     consumeUntil(g, e, "classdecl");
     {if (true) return new ClassDeclNode(a, t, n, e1, c);}
@@ -416,6 +416,7 @@ RecoverySet f2 = new RecoverySet(SEMICOLON).union(g).remove(IDENT),
         case LONG:
         case FLOAT:
           c = primitivetype(f1);
+                             t1 = c.position;
           break;
         case IDENT:
           t1 = jj_consume_token(IDENT);
@@ -470,10 +471,10 @@ RecoverySet f2 = new RecoverySet(SEMICOLON).union(g).remove(IDENT),
           }
        l.add(new VarNode(t2, k));
         }
-    {if (true) return new VarDeclNode(a, b, c, t1, l);}
+    {if (true) return new VarDeclNode(a, b, t1, l);}
       } catch (ParseException e) {
    consumeUntil(g, e, "vardecl");
-   {if (true) return new VarDeclNode(a, b, c, t1, l);}
+   {if (true) return new VarDeclNode(a, b, t1, l);}
       }
     throw new Error("Missing return statement in function");
     } finally {
@@ -578,6 +579,7 @@ PrimitiveTypeNode c = null;
         case LONG:
         case FLOAT:
           c = primitivetype(f2);
+                            t1 = c.position;
           break;
         case IDENT:
           t1 = jj_consume_token(IDENT);
@@ -603,10 +605,10 @@ PrimitiveTypeNode c = null;
         }
         t2 = jj_consume_token(IDENT);
         m = methodbody(g);
-        {if (true) return new MethodDeclNode(a, b, c, t1, k, t2, m);}
+        {if (true) return new MethodDeclNode(a, b, t1, k, t2, m);}
       } catch (ParseException e) {
    consumeUntil(g, e, "methoddecl");
-   {if (true) return new MethodDeclNode(a, b, c, t1, k, t2, m);}
+   {if (true) return new MethodDeclNode(a, b, t1, k, t2, m);}
       }
     throw new Error("Missing return statement in function");
     } finally {
@@ -670,6 +672,7 @@ PrimitiveTypeNode a = null;
           case LONG:
           case FLOAT:
             a = primitivetype(f1);
+                             t1 = a.position;
             break;
           case IDENT:
             t1 = jj_consume_token(IDENT);
@@ -695,7 +698,7 @@ PrimitiveTypeNode a = null;
                              k++;
           }
          q = new ListNode(new VarNode(t2, k));
-     p = new ListNode(new VarDeclNode(a, t1, q));
+     p = new ListNode(new VarDeclNode(null, null, t1, q));
           label_10:
           while (true) {
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -719,6 +722,7 @@ PrimitiveTypeNode a = null;
             case LONG:
             case FLOAT:
               a = primitivetype(f1);
+                                                   t1 = a.position;
               break;
             case IDENT:
               t1 = jj_consume_token(IDENT);
@@ -744,7 +748,7 @@ PrimitiveTypeNode a = null;
                                             k ++;
             }
          q = new ListNode(new VarNode(t2, k));
-         p.add(new VarDeclNode(a, t1, q));
+         p.add(new VarDeclNode(null, null, t1, q));
           }
           break;
         default:
@@ -864,7 +868,7 @@ RecoverySet f2 = new RecoverySet(RBRACE).union(g).remove(IDENT);
     }
   }
 
-//duvida
+//duvida super(null)
   final public MethodCallNode methodcall(RecoverySet g) throws ParseException, ParseEOFException {
     trace_call("methodcall");
     try {
@@ -903,12 +907,11 @@ RecoverySet f2 = new RecoverySet(RBRACE).union(g).remove(IDENT);
     }
   }
 
-//duvida tambem no AtribNode
   final public AtribNode atribstat(RecoverySet g) throws ParseException, ParseEOFException {
     trace_call("atribstat");
     try {
-ExpreNode e1 = null, e2 = null;
-MethodCallNode a = null;
+ExpreNode e1 = null;
+GeneralNode e2 = null;
 Token t1 = null;
 
 RecoverySet f1 = new RecoverySet(ASSIGN).union(g);
@@ -924,16 +927,16 @@ RecoverySet f1 = new RecoverySet(ASSIGN).union(g);
           if (jj_2_8(3)) {
             e2 = logicexpression(g);
           } else if (jj_2_9(3)) {
-            a = methodcall(g);
+            e2 = methodcall(g);
           } else {
             jj_consume_token(-1);
             throw new ParseException();
           }
         }
-      {if (true) return new AtribNode(t1, e1, e2, a);}
+      {if (true) return new AtribNode(t1, e1, e2);}
       } catch (ParseException e) {
    consumeUntil(g, e, "atribstat");
-   {if (true) return new AtribNode(t1, e1, e2, a);}
+   {if (true) return new AtribNode(t1, e1, e2);}
       }
     throw new Error("Missing return statement in function");
     } finally {
@@ -1225,7 +1228,7 @@ RecoverySet f1 = new RecoverySet(SEMICOLON).union(g),
         l.add(s);
       }
       jj_consume_token(RBRACE);
-          {if (true) return new SwitchNode(a, b, c, s);}
+          {if (true) return new SwitchNode(a, b, c, l);}
     throw new Error("Missing return statement in function");
     } finally {
       trace_return("switchstat");
@@ -1313,7 +1316,6 @@ RecoverySet f = First.statlist.remove(IDENT).union(g);
     }
   }
 
-//olhar depois
   final public ExpreNode lvalue(RecoverySet g) throws ParseException, ParseEOFException {
     trace_call("lvalue");
     try {
@@ -1378,7 +1380,6 @@ ListNode l = null;
     }
   }
 
-//duvida: deixar todos os que tem primitivetype ou ident instanciados na classe Node
   final public ExpreNode alocexpression(RecoverySet g) throws ParseException, ParseEOFException {
     trace_call("alocexpression");
     try {
@@ -1421,6 +1422,7 @@ RecoverySet f1 = new RecoverySet(RPAREN).union(g),
           case LONG:
           case FLOAT:
             a = primitivetype(f3);
+                               t2 = a.position;
             break;
           case IDENT:
             t2 = jj_consume_token(IDENT);
@@ -1448,7 +1450,7 @@ RecoverySet f1 = new RecoverySet(RPAREN).union(g),
               break label_15;
             }
           }
-            e1 = new NewArrayNode(t1, a, t2, l);
+            e1 = new NewArrayNode(t1, t2, l);
           break;
         default:
           jj_la1[42] = jj_gen;
@@ -1463,7 +1465,7 @@ RecoverySet f1 = new RecoverySet(RPAREN).union(g),
     }
   }
 
-//possivel gambiarra e super(null)
+//duvida super(null)
   final public ExpreNode logicexpression(RecoverySet g) throws ParseException, ParseEOFException {
     trace_call("logicexpression");
     try {
@@ -1520,9 +1522,9 @@ RecoverySet f1 = new RecoverySet(RPAREN).union(g),
           }
           e2 = expression(f3);
         if(l == null){
-                l = new ListNode(new RelationalNode(b, e2));
+                l = new ListNode(new RelationalNode(b, c, e2));
         }else{
-                l.add(new RelationalNode(b, e2));
+                l.add(new RelationalNode(b, c, e2));
         }
         }
     {if (true) return new RelationalNode(a, e1, l);}
@@ -1963,13 +1965,6 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     finally { jj_save(11, xla); }
   }
 
-  private boolean jj_3R_64() {
-    if (jj_scan_token(LPAREN)) return true;
-    if (jj_3R_36()) return true;
-    if (jj_scan_token(RPAREN)) return true;
-    return false;
-  }
-
   private boolean jj_3_4() {
     if (jj_3R_22()) return true;
     return false;
@@ -1984,6 +1979,13 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
       if (jj_3R_38()) { jj_scanpos = xsp; break; }
     }
     { if (!jj_rescan) trace_return("lvalue(LOOKAHEAD SUCCEEDED)"); return false; }
+  }
+
+  private boolean jj_3R_64() {
+    if (jj_scan_token(LPAREN)) return true;
+    if (jj_3R_36()) return true;
+    if (jj_scan_token(RPAREN)) return true;
+    return false;
   }
 
   private boolean jj_3R_63() {
@@ -2005,16 +2007,6 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     return false;
   }
 
-  private boolean jj_3R_62() {
-    if (jj_scan_token(null_constant)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_61() {
-    if (jj_scan_token(float_constant)) return true;
-    return false;
-  }
-
   private boolean jj_3_3() {
     if (jj_3R_21()) return true;
     if (jj_scan_token(SEMICOLON)) return true;
@@ -2032,8 +2024,8 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     return false;
   }
 
-  private boolean jj_3R_60() {
-    if (jj_scan_token(long_constant)) return true;
+  private boolean jj_3R_62() {
+    if (jj_scan_token(null_constant)) return true;
     return false;
   }
 
@@ -2042,8 +2034,23 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     return false;
   }
 
+  private boolean jj_3R_61() {
+    if (jj_scan_token(float_constant)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_60() {
+    if (jj_scan_token(long_constant)) return true;
+    return false;
+  }
+
   private boolean jj_3R_59() {
     if (jj_scan_token(short_constant)) return true;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_3R_24()) return true;
     return false;
   }
 
@@ -2054,11 +2061,6 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
 
   private boolean jj_3R_57() {
     if (jj_scan_token(double_constant)) return true;
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_3R_24()) return true;
     return false;
   }
 
@@ -2077,11 +2079,6 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     return false;
   }
 
-  private boolean jj_3R_53() {
-    if (jj_scan_token(int_constant)) return true;
-    return false;
-  }
-
   private boolean jj_3R_32() {
     Token xsp;
     xsp = jj_scanpos;
@@ -2092,6 +2089,11 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     if (jj_scan_token(41)) return true;
     }
     }
+    return false;
+  }
+
+  private boolean jj_3R_53() {
+    if (jj_scan_token(int_constant)) return true;
     return false;
   }
 
@@ -2167,28 +2169,9 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     return false;
   }
 
-  private boolean jj_3R_51() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(73)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(74)) return true;
-    }
-    return false;
-  }
-
   private boolean jj_3R_30() {
     if (jj_scan_token(LBRACKET)) return true;
     return false;
-  }
-
-  private boolean jj_3R_49() {
-    if (!jj_rescan) trace_call("unaryexpr(LOOKING AHEAD...)");
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_51()) jj_scanpos = xsp;
-    if (jj_3R_52()) { if (!jj_rescan) trace_return("unaryexpr(LOOKAHEAD FAILED)"); return true; }
-    { if (!jj_rescan) trace_return("unaryexpr(LOOKAHEAD SUCCEEDED)"); return false; }
   }
 
   private boolean jj_3R_39() {
@@ -2204,11 +2187,30 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     return false;
   }
 
+  private boolean jj_3R_51() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(73)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(74)) return true;
+    }
+    return false;
+  }
+
   private boolean jj_3R_22() {
     if (!jj_rescan) trace_call("atribstat(LOOKING AHEAD...)");
     if (jj_3R_26()) { if (!jj_rescan) trace_return("atribstat(LOOKAHEAD FAILED)"); return true; }
     if (jj_scan_token(ASSIGN)) { if (!jj_rescan) trace_return("atribstat(LOOKAHEAD FAILED)"); return true; }
     { if (!jj_rescan) trace_return("atribstat(LOOKAHEAD SUCCEEDED)"); return false; }
+  }
+
+  private boolean jj_3R_49() {
+    if (!jj_rescan) trace_call("unaryexpr(LOOKING AHEAD...)");
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_51()) jj_scanpos = xsp;
+    if (jj_3R_52()) { if (!jj_rescan) trace_return("unaryexpr(LOOKAHEAD FAILED)"); return true; }
+    { if (!jj_rescan) trace_return("unaryexpr(LOOKAHEAD SUCCEEDED)"); return false; }
   }
 
   private boolean jj_3R_27() {
@@ -2219,6 +2221,24 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     if (jj_scan_token(CLASS)) { if (!jj_rescan) trace_return("classdecl(LOOKAHEAD FAILED)"); return true; }
     if (jj_scan_token(IDENT)) { if (!jj_rescan) trace_return("classdecl(LOOKAHEAD FAILED)"); return true; }
     { if (!jj_rescan) trace_return("classdecl(LOOKAHEAD SUCCEEDED)"); return false; }
+  }
+
+  private boolean jj_3R_28() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(39)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(40)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(41)) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_31() {
+    if (jj_scan_token(COMMA)) return true;
+    return false;
   }
 
   private boolean jj_3R_50() {
@@ -2235,16 +2255,8 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     return false;
   }
 
-  private boolean jj_3R_28() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(39)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(40)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(41)) return true;
-    }
-    }
+  private boolean jj_3R_29() {
+    if (jj_3R_40()) return true;
     return false;
   }
 
@@ -2252,27 +2264,6 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     if (jj_scan_token(IDENT)) return true;
     if (jj_scan_token(LPAREN)) return true;
     return false;
-  }
-
-  private boolean jj_3R_31() {
-    if (jj_scan_token(COMMA)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_29() {
-    if (jj_3R_40()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_47() {
-    if (!jj_rescan) trace_call("term(LOOKING AHEAD...)");
-    if (jj_3R_49()) { if (!jj_rescan) trace_return("term(LOOKAHEAD FAILED)"); return true; }
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_50()) { jj_scanpos = xsp; break; }
-    }
-    { if (!jj_rescan) trace_return("term(LOOKAHEAD SUCCEEDED)"); return false; }
   }
 
   private boolean jj_3R_34() {
@@ -2294,6 +2285,17 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     if (jj_scan_token(52)) return true;
     }
     return false;
+  }
+
+  private boolean jj_3R_47() {
+    if (!jj_rescan) trace_call("term(LOOKING AHEAD...)");
+    if (jj_3R_49()) { if (!jj_rescan) trace_return("term(LOOKAHEAD FAILED)"); return true; }
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_50()) { jj_scanpos = xsp; break; }
+    }
+    { if (!jj_rescan) trace_return("term(LOOKAHEAD SUCCEEDED)"); return false; }
   }
 
   private boolean jj_3R_20() {
@@ -2334,17 +2336,6 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     { if (!jj_rescan) trace_return("paramlist(LOOKAHEAD SUCCEEDED)"); return false; }
   }
 
-  private boolean jj_3R_48() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(73)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(74)) return true;
-    }
-    if (jj_3R_47()) return true;
-    return false;
-  }
-
   private boolean jj_3R_24() {
     if (!jj_rescan) trace_call("methodcall(LOOKING AHEAD...)");
     if (jj_scan_token(IDENT)) { if (!jj_rescan) trace_return("methodcall(LOOKAHEAD FAILED)"); return true; }
@@ -2361,6 +2352,17 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
 
   private boolean jj_3_9() {
     if (jj_3R_24()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_48() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(73)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(74)) return true;
+    }
+    if (jj_3R_47()) return true;
     return false;
   }
 
@@ -2413,17 +2415,17 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     return false;
   }
 
+  private boolean jj_3R_33() {
+    if (!jj_rescan) trace_call("methodbody(LOOKING AHEAD...)");
+    if (jj_scan_token(LPAREN)) { if (!jj_rescan) trace_return("methodbody(LOOKAHEAD FAILED)"); return true; }
+    { if (!jj_rescan) trace_return("methodbody(LOOKAHEAD SUCCEEDED)"); return false; }
+  }
+
   private boolean jj_3_10() {
     if (jj_scan_token(DOT)) return true;
     if (jj_scan_token(IDENT)) return true;
     if (jj_scan_token(LPAREN)) return true;
     return false;
-  }
-
-  private boolean jj_3R_33() {
-    if (!jj_rescan) trace_call("methodbody(LOOKING AHEAD...)");
-    if (jj_scan_token(LPAREN)) { if (!jj_rescan) trace_return("methodbody(LOOKAHEAD FAILED)"); return true; }
-    { if (!jj_rescan) trace_return("methodbody(LOOKAHEAD SUCCEEDED)"); return false; }
   }
 
   private boolean jj_3R_44() {
@@ -2442,6 +2444,11 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     if (jj_3R_45()) return true;
     }
     }
+    return false;
+  }
+
+  private boolean jj_3_5() {
+    if (jj_3R_23()) return true;
     return false;
   }
 
@@ -2481,11 +2488,6 @@ RecoverySet f =  new RecoverySet(COMMA).union(g);
     xsp = jj_scanpos;
     if (jj_scan_token(81)) jj_scanpos = xsp;
     if (jj_3R_36()) return true;
-    return false;
-  }
-
-  private boolean jj_3_5() {
-    if (jj_3R_23()) return true;
     return false;
   }
 
