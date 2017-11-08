@@ -20,11 +20,12 @@ public class VarDeclNode extends StatementNode {
         vars = p;
     }
 
-    public VarDeclNode(PrimitiveTypeNode c, Token t, ListNode p){
+    public VarDeclNode(PrimitiveTypeNode c, Token t, ListNode p) {
+    	super(null);
     	if(c == null){
-    		super(t);
+    		this.position = t;
     	}else{
-    		super(c.tipo);
+    		this.position = c.tipo;
     	}
     	vars = p;
     }

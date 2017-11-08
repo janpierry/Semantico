@@ -679,7 +679,7 @@ catch (ParseException e)
 }
 }
 
-//duvida: MethodCallNode com super(null)
+//duvida
 MethodCallNode methodcall(RecoverySet g) throws ParseEOFException :
 {
 	RecoverySet f1 = new RecoverySet(RPAREN).union(g);
@@ -972,11 +972,11 @@ ExpreNode alocexpression(RecoverySet g) throws ParseEOFException :
 ExpreNode e1 = null,
           e2 = null;
 ListNode l = null;
-Token t1, t2;
+Token t1, t2 = null;
 PrimitiveTypeNode a = null;
 
 RecoverySet f1 = new RecoverySet(RPAREN).union(g),
-            f2 = new RecoverySet(RBRACKET).union(g);
+            f2 = new RecoverySet(RBRACKET).union(g),
             f3 = new RecoverySet(LBRACKET).union(g);
 }
 {
@@ -999,7 +999,7 @@ RecoverySet f1 = new RecoverySet(RPAREN).union(g),
     { return e1; }
 }
 
-//possivel gambiarra
+//possivel gambiarra e super(null)
 ExpreNode logicexpression(RecoverySet g) throws ParseEOFException :
 {
 	RecoverySet f1 = new RecoverySet(XOR).union(g);
@@ -1013,7 +1013,7 @@ ExpreNode logicexpression(RecoverySet g) throws ParseEOFException :
 try{
   [a = <NOT>] e1 = expression(f3) ((b =  <XOR> | b = <OR> | b = <AND>) [c = <NOT>] e2 = expression(f3)
   {
-  	if(l = null){
+  	if(l == null){
   		l = new ListNode(new RelationalNode(b, e2));
   	}else{
   		l.add(new RelationalNode(b, e2));
@@ -1094,7 +1094,7 @@ Token t = null;
    { return ( (t == null) ? e : new UnaryNode(t, e));}
 }
 
-//duvida: na classe ExpreNode criei um novo construtor com super(null)
+//duvida: na classe ResultMethodCallNode criei um construtor com super(null)
 ExpreNode factor() throws ParseEOFException :
 {
 ExpreNode e = null;
@@ -1125,7 +1125,7 @@ MethodCallNode m = null;
     |
        LOOKAHEAD(3) e = lvalue(null) 
     |
-       m = methodcall(null) { e = new ExpreNode(m);} 
+       m = methodcall(null) { e = new ResultMethodCallNode(m);} 
     |
        <LPAREN> e = expression(null) <RPAREN>
     )

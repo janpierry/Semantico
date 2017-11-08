@@ -15,7 +15,7 @@ public class MethodDeclNode extends GeneralNode {
         super(a);
         isFinal = b;
         if(c == null){
-        	tipoClasse = t1;
+        	tipoClasse = t;
         }else{
         	tipo = c;
         }

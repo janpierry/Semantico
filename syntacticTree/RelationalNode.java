@@ -7,7 +7,6 @@ public class RelationalNode extends ExpreNode {
     public ExpreNode expr1;
     public ExpreNode expr2;
     public ListNode lista;
-    public Token possivelNot;
 
     public RelationalNode(Token t, ExpreNode e1, ExpreNode e2) {
         super(t);
@@ -23,9 +22,8 @@ public class RelationalNode extends ExpreNode {
     }
 
     //Construtor para representar algo tipo: xor b. Serve para ser colocado no ListNode no construtor de cima
-    public RelationalNode(Token a, Token b, ExpreNode e1){
-    	super(a);
-    	possivelNot = b;
+    public RelationalNode(Token b, ExpreNode e1){
+    	super(b);
     	expr1 = e1;
     }
 }

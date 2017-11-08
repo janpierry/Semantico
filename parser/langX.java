@@ -864,7 +864,7 @@ RecoverySet f2 = new RecoverySet(RBRACE).union(g).remove(IDENT);
     }
   }
 
-//duvida: MethodCallNode com super(null)
+//duvida
   final public MethodCallNode methodcall(RecoverySet g) throws ParseException, ParseEOFException {
     trace_call("methodcall");
     try {
@@ -1176,17 +1176,17 @@ RecoverySet f1 = new RecoverySet(SEMICOLON).union(g),
         RecoverySet f2 = new RecoverySet(RPAREN).union(g);
         Token a = null;
         StatementNode s = null;
-        ExpreNode e = null;
+        ExpreNode e1 = null;
       try {
         a = jj_consume_token(DO);
         s = statement(f1);
         jj_consume_token(LPAREN);
-        e = logicexpression(f2);
+        e1 = logicexpression(f2);
         jj_consume_token(RPAREN);
-          {if (true) return new DoWhileNode(a, s, e);}
+          {if (true) return new DoWhileNode(a, s, e1);}
       } catch (ParseException e) {
         consumeUntil(g, e, "dowhilestat");
-        {if (true) return new DoWhileNode(a, s, e);}
+        {if (true) return new DoWhileNode(a, s, e1);}
       }
     throw new Error("Missing return statement in function");
     } finally {
@@ -1236,13 +1236,13 @@ RecoverySet f1 = new RecoverySet(SEMICOLON).union(g),
     trace_call("switchcasestat");
     try {
         Token a = null, b = null;
-        ExpreNode e = null;
+        ExpreNode e1 = null;
         StatementNode s = null;
       try {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case CASE:
           a = jj_consume_token(CASE);
-          e = factor();
+          e1 = factor();
           break;
         case DEFAULTT:
           a = jj_consume_token(DEFAULTT);
@@ -1254,10 +1254,10 @@ RecoverySet f1 = new RecoverySet(SEMICOLON).union(g),
         }
         b = jj_consume_token(DOISP);
         s = statement(g);
-          {if (true) return new SwitchCaseNode(a, e, b, s);}
+          {if (true) return new SwitchCaseNode(a, e1, b, s);}
       } catch (ParseException e) {
         consumeUntil(g, e, "switchcasestat");
-        {if (true) return new SwitchCaseNode(a, e, b, s);}
+        {if (true) return new SwitchCaseNode(a, e1, b, s);}
       }
     throw new Error("Missing return statement in function");
     } finally {
@@ -1385,11 +1385,11 @@ ListNode l = null;
 ExpreNode e1 = null,
           e2 = null;
 ListNode l = null;
-Token t1, t2;
+Token t1, t2 = null;
 PrimitiveTypeNode a = null;
 
 RecoverySet f1 = new RecoverySet(RPAREN).union(g),
-            f2 = new RecoverySet(RBRACKET).union(g);
+            f2 = new RecoverySet(RBRACKET).union(g),
             f3 = new RecoverySet(LBRACKET).union(g);
       t1 = jj_consume_token(NEW);
       if (jj_2_11(2)) {
@@ -1463,7 +1463,7 @@ RecoverySet f1 = new RecoverySet(RPAREN).union(g),
     }
   }
 
-//possivel gambiarra
+//possivel gambiarra e super(null)
   final public ExpreNode logicexpression(RecoverySet g) throws ParseException, ParseEOFException {
     trace_call("logicexpression");
     try {
@@ -1519,7 +1519,7 @@ RecoverySet f1 = new RecoverySet(RPAREN).union(g),
             ;
           }
           e2 = expression(f3);
-        if(l = null){
+        if(l == null){
                 l = new ListNode(new RelationalNode(b, e2));
         }else{
                 l.add(new RelationalNode(b, e2));
@@ -1707,7 +1707,7 @@ Token t = null;
     }
   }
 
-//duvida: na classe ExpreNode criei um novo construtor com super(null)
+//duvida: na classe ResultMethodCallNode criei um construtor com super(null)
   final public ExpreNode factor() throws ParseException, ParseEOFException {
     trace_call("factor");
     try {
@@ -1763,7 +1763,7 @@ MethodCallNode m = null;
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case IDENT:
             m = methodcall(null);
-                              e = new ExpreNode(m);
+                              e = new ResultMethodCallNode(m);
             break;
           case LPAREN:
             jj_consume_token(LPAREN);
